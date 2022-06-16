@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 
 class ProductInfo {
   final String name;
-  final double price;
+  final int price;
 
   ProductInfo(this.name, this.price);
 }
 
 final products = [
-  ProductInfo('Wireless mouse', 0.3),
-  ProductInfo('Keyboard', 5.8),
+  ProductInfo('Wireless mouse', 3),
+  ProductInfo('Keyboard', 5),
   ProductInfo('Camera', 8),
-  ProductInfo('Speaker', 4),
-  ProductInfo('iPad', 5),
+  ProductInfo('Speaker', 6),
+  ProductInfo('iPad', 6),
 ];
 
 class HomePage extends StatefulWidget {
@@ -25,6 +25,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentProductIndex = 0;
+  int? _inputtedPrice = 0;
+  String _result = "";
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +43,42 @@ class _HomePageState extends State<HomePage> {
                 key: const Key("priceText"),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                onChanged: (value) {
+                  _inputtedPrice = int.tryParse(value);
+                },
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 40)),
             ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    if (_currentProductIndex < 4) {
-                      _currentProductIndex++;
-                    }
+                    _result =
+                        _inputtedPrice == products[_currentProductIndex].price
+                            ? "pass"
+                            : "fail";
                   });
                 },
-                child: const Text("Check"))
+                child: const Text("Check")),
+            Visibility(
+              visible: _result.isNotEmpty,
+              child: Text(
+                _result,
+                key: const Key("result"),
+              ),
+            ),
+            Visibility(
+              visible: _result.isNotEmpty,
+              child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _result = "";
+                      if (_currentProductIndex < 4) {
+                        _currentProductIndex++;
+                      }
+                    });
+                  },
+                  child: const Text("Next")),
+            ),
           ],
         ),
       ),
